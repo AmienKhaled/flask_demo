@@ -28,26 +28,26 @@
 	<div class="limiter">
 		<div class="container-login100" style="background-image: url('/static/images/img-01.jpg');">
 			<div class="wrap-login100 p-t-190 p-b-30">
-				<form class="login100-form validate-form" method="post" action="/predict" enctype="multipart/form-data">
+				<form class="login100-form validate-form" method="post" action="/predict">
 
 					<span class="login100-form-title p-t-20 p-b-45">
-						Enter Upload Photo
+						Enter Tweet
 					</span>
 
-					<div class="wrap-input100 validate-input m-b-10" data-validate = "Password is required">
-						<input 	style="background-color: transparent;" type="file" name="file">
+					<div class="" >
+						<input  type="text" name="tweet">
 					</div>
 
 					<div class="container-login100-form-btn p-t-10">
 						<button class="login100-form-btn">
-							Upload
+							Get Sentiment
 						</button>
 					</div>
 
 					<div class="text-center w-full p-t-25 p-b-230">
-						{% if digit %}
+						{% if twt  %}
 							<h2 style="color:white">
-								Predicted Digit Is : {{digit}}
+								This Tweet Is : {{twt}}
 							</h2>
 						{% endif %}
 					</div>

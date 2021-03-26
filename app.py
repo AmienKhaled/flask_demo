@@ -7,11 +7,10 @@ import os
 # __name__ is equal to app.py
 app = Flask(__name__)
 
-UPLOAD_FOLDER = 'upload'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # load model from model.pkl
 model = joblib.load('model.pkl')
+tfidv = joblib.load('tfidv.pkl')
 
 
 
@@ -24,23 +23,13 @@ def home():
 @app.route("/predict", methods=["POST"])
 def predict():
 
-	# check if file is not in the requst
-	if 'file' not in request.files:
-		return "Error"
+	if not request.form.get("tweet", False):
+		return redirect("/")
 
-	# Save File
-	file = request.files['file']
-	file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-	file.save(file_path)
+	text = request.form.get("tweet")
+	prediction = model.predict(tfidv.transform( [text ] ) )
 
-	# read the image and convert it to grey scale
-	img = Image.open(file_path)
-	my_img_resized = np.array(img.resize((28,28)).convert('L'))
-
-	# Predict
-	prediction = model.predict(my_img_resized.reshape(-1, 28*28)/255)
-
-	return render_template("index.html", digit=prediction[0])	
+	return render_template("index.html", twt= "Positive" if prediction[0] else "Negative")	
 
 
 
@@ -48,23 +37,13 @@ def predict():
 @app.route("/api/predict", methods=["POST"])
 def api_predict():
 
-	# check if file is not in the requst
-	if 'file' not in request.files:
-		return "Error"
+	if not request.form.get("tweet", False):
+		return jsonify({"prediction": "Error"})
 
-	# Save File
-	file = request.files['file']
-	file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-	file.save(file_path)
+	text = request.form.get("tweet")
+	prediction = model.predict(tfidv.transform( [text ] ) )
 
-	# read the image and convert it to grey scale
-	img = Image.open(file_path)
-	my_img_resized = np.array(img.resize((28,28)).convert('L'))
-
-	# Predict
-	prediction = model.predict(my_img_resized.reshape(-1, 28*28)/255)
-
-	return jsonify({"prediction":str(prediction[0])})
+	return jsonify({"prediction": "Positive" if prediction[0] else "Negative"})
 
 
 if __name__ == "__main__":
